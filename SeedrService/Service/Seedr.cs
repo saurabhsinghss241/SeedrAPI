@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using SeedrService.Helpers;
 using SeedrService.Models;
-using System.Net.Mime;
-using System.Xml.Linq;
 
 namespace SeedrService.Service
 {
@@ -34,22 +32,72 @@ namespace SeedrService.Service
                 throw;
             }
         }
-
-        public async Task<string> AddTorrent(string token, string magnet)
+        public async Task<string> AddTorrent(string token, string magnet, string wishlistId = "", int folderId = -1)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var formData = new Dictionary<string, string>
+                {
+                    { "access_token", token },
+                    { "func", "add_torrent" },
+                    { "torrent_magnet", magnet },
+                    { "wishlist_id",wishlistId},
+                    { "folder_id", folderId.ToString() }
+                };
+                var content = new FormUrlEncodedContent(formData);
 
+                return await _httpClientWrapper.PostAsync(_baseURL, content);
+
+                //return JsonConvert.DeserializeObject<string>(res);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<string> ChangeName(string token, string name, string password)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var formData = new Dictionary<string, string>
+                {
+                    { "access_token", token },
+                    { "func", "user_account_modify" },
+                    { "setting","fullname" },
+                    { "password", password },
+                    { "fullname", name },
+                };
+                var content = new FormUrlEncodedContent(formData);
 
+                return await _httpClientWrapper.PostAsync(_baseURL, content);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<string> ChangePassword(string token, string oldPassword, string newPassword)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var formData = new Dictionary<string, string>
+                {
+                    { "access_token", token },
+                    { "func", "user_account_modify" },
+                    { "setting","password" },
+                    { "password", oldPassword },
+                    { "new_password", newPassword },
+                    { "new_password_repeat",newPassword },
+                };
+                var content = new FormUrlEncodedContent(formData);
 
+                return await _httpClientWrapper.PostAsync(_baseURL, content);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<string> CreateArchive(string token, string folderId)
         {
             try
@@ -92,7 +140,6 @@ namespace SeedrService.Service
                 throw;
             }
         }
-
         public async Task<string> DeleteFile(string token, string fileId)
         {
             try
@@ -114,7 +161,6 @@ namespace SeedrService.Service
                 throw;
             }
         }
-
         public async Task<string> DeleteFolder(string token, string folderId)
         {
             try
@@ -128,7 +174,7 @@ namespace SeedrService.Service
                 var content = new FormUrlEncodedContent(formData);
 
                 return await _httpClientWrapper.PostAsync(_baseURL, content);
-                
+
                 //return JsonConvert.DeserializeObject<string>(res);
             }
             catch (Exception)
@@ -136,7 +182,6 @@ namespace SeedrService.Service
                 throw;
             }
         }
-
         public async Task<string> DeleteTorrent(string token, string torrentId)
         {
             try
@@ -158,7 +203,6 @@ namespace SeedrService.Service
                 throw;
             }
         }
-
         public async Task<string> DeleteWishList(string token, string wishlistId)
         {
             try
@@ -178,7 +222,6 @@ namespace SeedrService.Service
                 throw;
             }
         }
-
         public async Task<string> FetchFile(string token, string fileId)
         {
             try
@@ -198,12 +241,24 @@ namespace SeedrService.Service
                 throw;
             }
         }
-
         public async Task<string> GetDevice(string token)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var formData = new Dictionary<string, string>
+                {
+                    { "access_token", token },
+                    { "func", "get_devices" },
+                };
+                var content = new FormUrlEncodedContent(formData);
 
+                return await _httpClientWrapper.PostAsync(_baseURL, content);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<MemBandwidthResponse> GetMemoryBandWidth(string token)
         {
             try
@@ -223,12 +278,24 @@ namespace SeedrService.Service
                 throw;
             }
         }
-
         public async Task<string> GetSettings(string token)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var formData = new Dictionary<string, string>
+                {
+                    { "access_token", token },
+                    { "func", "get_settings" },
+                };
+                var content = new FormUrlEncodedContent(formData);
 
+                return await _httpClientWrapper.PostAsync(_baseURL, content);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<string> ListContent(string token, int folderId = 0, string contentType = "folder")
         {
             try
@@ -251,7 +318,6 @@ namespace SeedrService.Service
                 throw;
             }
         }
-
         public async Task<string> RenameFile(string token, string fileId, string renameTo)
         {
             try
@@ -274,7 +340,6 @@ namespace SeedrService.Service
                 throw;
             }
         }
-
         public async Task<string> RenameFolder(string token, string folderId, string renameTo)
         {
             try
@@ -298,11 +363,28 @@ namespace SeedrService.Service
             }
         }
 
+        //Scrape Magnet link form the WebPage URL
         public async Task<string> ScanPage(string token, string url)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var formData = new Dictionary<string, string>
+                {
+                    { "access_token", token },
+                    { "func", "scan_page" },
+                    { "url", url },
+                };
+                var content = new FormUrlEncodedContent(formData);
 
+                return await _httpClientWrapper.PostAsync(_baseURL, content);
+
+                //return JsonConvert.DeserializeObject<string>(res);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public async Task<string> SearchFile(string token, string query)
         {
             try
@@ -322,10 +404,25 @@ namespace SeedrService.Service
                 throw;
             }
         }
-
         public async Task<string> TestToken(string token)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var formData = new Dictionary<string, string>
+                {
+                    { "access_token", token },
+                    { "func", "test" },
+                };
+                var content = new FormUrlEncodedContent(formData);
+
+                return await _httpClientWrapper.PostAsync(_baseURL, content);
+
+                //return JsonConvert.DeserializeObject<string>(res);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
