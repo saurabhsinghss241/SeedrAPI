@@ -32,7 +32,7 @@ namespace SeedrService.Service
                 throw;
             }
         }
-        public async Task<string> AddTorrent(string token, string magnet, string wishlistId = "", int folderId = -1)
+        public async Task<AddTorrentResponse> AddTorrent(string token, string magnet, string wishlistId = "", int folderId = -1)
         {
             try
             {
@@ -46,9 +46,9 @@ namespace SeedrService.Service
                 };
                 var content = new FormUrlEncodedContent(formData);
 
-                return await _httpClientWrapper.PostAsync(_baseURL, content);
+                var res = await _httpClientWrapper.PostAsync(_baseURL, content);
 
-                //return JsonConvert.DeserializeObject<string>(res);
+                return JsonConvert.DeserializeObject<AddTorrentResponse>(res);
             }
             catch (Exception)
             {
@@ -119,7 +119,7 @@ namespace SeedrService.Service
                 throw;
             }
         }
-        public async Task<string> Delete(string token, int id)
+        public async Task<CommonResponse> DeleteFile(string token, string fileId)
         {
             try
             {
@@ -127,41 +127,20 @@ namespace SeedrService.Service
                 {
                     { "access_token", token },
                     { "func", "delete" },
-                    { "delete_arr",$"[{{\"type\":\"folder\",\"id\":{id}}}]" }
+                    { "delete_arr",$"[{{\"type\":\"file\",\"id\":{fileId}}}]" }
                 };
                 var content = new FormUrlEncodedContent(formData);
 
-                return await _httpClientWrapper.PostAsync(_baseURL, content);
+                var res = await _httpClientWrapper.PostAsync(_baseURL, content);
 
-                //return JsonConvert.DeserializeObject<string>(res);
+                return JsonConvert.DeserializeObject<CommonResponse>(res);
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        public async Task<string> DeleteFile(string token, string fileId)
-        {
-            try
-            {
-                var formData = new Dictionary<string, string>
-                {
-                    { "access_token", token },
-                    { "func", "delete" },
-                    { "delete_arr",$"[{{\"type\":\"folder\",\"id\":{fileId}}}]" }
-                };
-                var content = new FormUrlEncodedContent(formData);
-
-                return await _httpClientWrapper.PostAsync(_baseURL, content);
-
-                //return JsonConvert.DeserializeObject<string>(res);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        public async Task<string> DeleteFolder(string token, string folderId)
+        public async Task<CommonResponse> DeleteFolder(string token, string folderId)
         {
             try
             {
@@ -173,16 +152,16 @@ namespace SeedrService.Service
                 };
                 var content = new FormUrlEncodedContent(formData);
 
-                return await _httpClientWrapper.PostAsync(_baseURL, content);
+                var res = await _httpClientWrapper.PostAsync(_baseURL, content);
 
-                //return JsonConvert.DeserializeObject<string>(res);
+                return JsonConvert.DeserializeObject<CommonResponse>(res);
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        public async Task<string> DeleteTorrent(string token, string torrentId)
+        public async Task<CommonResponse> DeleteTorrent(string token, string torrentId)
         {
             try
             {
@@ -190,20 +169,19 @@ namespace SeedrService.Service
                 {
                     { "access_token", token },
                     { "func", "delete" },
-                    { "delete_arr",$"[{{\"type\":\"folder\",\"id\":{torrentId}}}]" }
+                    { "delete_arr",$"[{{\"type\":\"torrent\",\"id\":{torrentId}}}]" }
                 };
                 var content = new FormUrlEncodedContent(formData);
 
-                return await _httpClientWrapper.PostAsync(_baseURL, content);
-
-                //return JsonConvert.DeserializeObject<string>(res);
+                var res = await _httpClientWrapper.PostAsync(_baseURL, content);
+                return JsonConvert.DeserializeObject<CommonResponse>(res);
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        public async Task<string> DeleteWishList(string token, string wishlistId)
+        public async Task<CommonResponse> DeleteWishList(string token, string wishlistId)
         {
             try
             {
@@ -215,7 +193,8 @@ namespace SeedrService.Service
                 };
                 var content = new FormUrlEncodedContent(formData);
 
-                return await _httpClientWrapper.PostAsync(_baseURL, content);
+                var res = await _httpClientWrapper.PostAsync(_baseURL, content);
+                return JsonConvert.DeserializeObject<CommonResponse>(res);
             }
             catch (Exception)
             {
@@ -296,7 +275,7 @@ namespace SeedrService.Service
                 throw;
             }
         }
-        public async Task<string> ListContent(string token, int folderId = 0, string contentType = "folder")
+        public async Task<ListContentResponse> ListContent(string token, int folderId = 0, string contentType = "folder")
         {
             try
             {
@@ -307,11 +286,10 @@ namespace SeedrService.Service
                     { "content_type", contentType },
                     { "content_id", folderId.ToString() }
                 };
+
                 var content = new FormUrlEncodedContent(formData);
-
-                return await _httpClientWrapper.PostAsync(_baseURL, content);
-
-                //return JsonConvert.DeserializeObject<string>(res);
+                var response = await _httpClientWrapper.PostAsync(_baseURL, content);
+                return JsonConvert.DeserializeObject<ListContentResponse>(response);
             }
             catch (Exception)
             {
