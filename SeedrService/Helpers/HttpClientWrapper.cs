@@ -1,13 +1,11 @@
-﻿using System.Net.Http;
-
-namespace SeedrService.Helpers
+﻿namespace SeedrService.Helpers
 {
     public class HttpClientWrapper
     {
         private readonly HttpClient _httpClient;
-        public HttpClientWrapper()
+        public HttpClientWrapper(HttpClient httpClient)
         {
-            _httpClient = new HttpClient();
+            _httpClient = httpClient;
         }
 
         public async Task<string> GetAsync(string url)
@@ -16,6 +14,10 @@ namespace SeedrService.Helpers
             response.EnsureSuccessStatusCode(); // Ensure a successful response
 
             return await response.Content.ReadAsStringAsync();
+        }
+        public async Task<T> GetJSONAsync<T>(string url)
+        {
+            return await _httpClient.GetFromJsonAsync<T>(url);
         }
 
         public async Task<string> PostAsync(string url, string content)
@@ -39,5 +41,6 @@ namespace SeedrService.Helpers
                 return "Request Failed";
             }
         }
+
     }
 }
