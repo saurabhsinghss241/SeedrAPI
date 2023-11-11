@@ -10,7 +10,7 @@
 
         public async Task<string> GetAsync(string url)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(url);
+            HttpResponseMessage response = await _httpClient.GetAsync(new Uri(url));
             response.EnsureSuccessStatusCode(); // Ensure a successful response
 
             return await response.Content.ReadAsStringAsync();

@@ -12,7 +12,7 @@
         public string Type { get; set; }
         public string Name { get; set; }
         public int Parent { get; set; }
-        public List<object> Indexes { get; set; }
+        public List<int> Indexes { get; set; }
         public List<Torrent> Torrents { get; set; }
         public List<Folder> Folders { get; set; }
         public List<File> Files { get; set; }

@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
 using SeedrService.Helpers;
 using SeedrService.Models;
+using System.Diagnostics;
+using System.Linq;
+using File = SeedrService.Models.File;
 
 namespace SeedrService.Service
 {
@@ -201,7 +204,7 @@ namespace SeedrService.Service
                 throw;
             }
         }
-        public async Task<string> FetchFile(string token, string fileId)
+        public async Task<GenerateURL> FetchFile(string token, string fileId)
         {
             try
             {
@@ -213,7 +216,8 @@ namespace SeedrService.Service
                 };
                 var content = new FormUrlEncodedContent(formData);
 
-                return await _httpClientWrapper.PostAsync(_baseURL, content);
+                var res = await _httpClientWrapper.PostAsync(_baseURL, content);
+                return JsonConvert.DeserializeObject<GenerateURL>(res);
             }
             catch (Exception)
             {
@@ -401,6 +405,97 @@ namespace SeedrService.Service
             {
                 throw;
             }
+        }
+
+        public async Task<GenerateURL> MagnetToDirectLink(string token, string magnet)
+        {
+            try
+            {
+                var addMagnetResponse = await AddTorrent(token, magnet);
+
+                if (addMagnetResponse.Code != 200 || addMagnetResponse.Wt != null)
+                    return new GenerateURL() { Error = "Provide Valid and Healthy Torrent." };
+
+                (bool success, string folderId, string message) = await ProgressStatus(token, addMagnetResponse.User_torrent_id);
+                if (success && !string.IsNullOrEmpty(folderId))
+                {
+                    //Using FolderId List all Files and Pick the biggest and then generate link
+                    var files = await ListContent(token, int.Parse(folderId));
+
+                    if (files.Files != null)
+                    {
+                        var maxFile = files.Files.OrderByDescending(x => x.Size).First();
+                        return await FetchFile(token, maxFile.Folder_file_id.ToString());
+                    }
+                }
+                return new GenerateURL() { Error = message };
+            }
+            catch (Exception ex)
+            {
+                return new GenerateURL() { Error = ex.Message };
+            }
+        }
+        private async Task<(bool, string, string)> ProgressStatus(string token, int torrentId)
+        {
+            var getList = await ListContent(token);
+
+            var progressCheckURL = string.Empty;
+            var folderId = string.Empty;
+            var message = "Success";
+
+            if (getList.Torrents == null)
+            {
+                return (true, folderId, "Processing Queue is Empty");
+            }
+
+            foreach (var torrent in getList.Torrents)
+            {
+                if (torrent.Id == torrentId)
+                {
+                    progressCheckURL = torrent.Progress_url;
+                    if (torrent.Warnings != null)
+                        message = torrent.Warnings;
+
+                    break;
+                }
+            }
+
+            if (progressCheckURL != string.Empty)
+            {
+                float completed = 0;
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                try
+                {
+                    while (completed < 101 && stopwatch.Elapsed < TimeSpan.FromSeconds(120))
+                    {
+                        await Task.Delay(1000);
+                        var response = await _httpClientWrapper.GetAsync(progressCheckURL);
+
+                        int n = response.Length;
+                        var result = response[2..^1];
+
+                        var currentProgress = JsonConvert.DeserializeObject<ProgressResponse>(result);
+                        completed = currentProgress.stats != null ? currentProgress.stats.progress : completed;
+                        folderId = currentProgress.folder_created;
+                    }
+
+                    if (completed < 101)
+                    {
+                        await DeleteTorrent(token, torrentId.ToString());
+                        return (false, folderId, message);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await DeleteTorrent(token, torrentId.ToString());
+                    message = ex.Message;
+                }
+
+            }
+
+            return (true, folderId, message);
         }
     }
 }

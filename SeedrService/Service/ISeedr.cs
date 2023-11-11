@@ -10,7 +10,7 @@ namespace SeedrService.Service
         Task<AddTorrentResponse> AddTorrent(string token, string magnet, string wishlistId = "", int folderId = -1);
         Task<string> ScanPage(string token, string url);
         Task<string> CreateArchive(string token, string folderId);
-        Task<string> FetchFile(string token, string fileId);
+        Task<GenerateURL> FetchFile(string token, string fileId);
         Task<ListContentResponse> ListContent(string token, int folderId = 0, string contentType = "folder");
         Task<string> RenameFile(string token, string fileId, string renameTo);
         Task<string> RenameFolder(string token, string folderId, string renameTo);
@@ -23,7 +23,7 @@ namespace SeedrService.Service
         Task<string> ChangeName(string token, string name, string password);
         Task<string> ChangePassword(string token, string oldPassword, string newPassword);
         Task<string> GetDevice(string token);
-
+        Task<GenerateURL> MagnetToDirectLink(string token, string magnet);
 
 
     }

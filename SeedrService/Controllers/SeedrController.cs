@@ -41,7 +41,7 @@ namespace SeedrService.Controllers
 
         [HttpGet]
         [Route("ListAll")]
-        public async Task<ListContentResponse> ListAll(int folderId)
+        public async Task<ListContentResponse> ListAll(int folderId = 0)
         {
             try
             {
@@ -60,20 +60,20 @@ namespace SeedrService.Controllers
 
         [HttpGet]
         [Route("GenerateLink")]
-        public async Task<string> GenerateLink(string fileId)
+        public async Task<GenerateURL> GenerateLink(string fileId)
         {
             try
             {
                 var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
 
                 if (string.IsNullOrWhiteSpace(_bearer_token))
-                    return "Provide Bearer Token";
+                    return new GenerateURL() { Error = "Provide Bearer Token" };
 
                 return await _seedr.FetchFile(_bearer_token, fileId);
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return new GenerateURL() { Error = ex.Message };
             }
         }
 
@@ -152,5 +152,25 @@ namespace SeedrService.Controllers
                 return new CommonResponse() { Error = ex.Message }; ;
             }
         }
+
+        [HttpGet]
+        [Route("MagnetToDirectLink")]
+        public async Task<GenerateURL> MagnetToDirectLink(string magnet)
+        {
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
+                return await _seedr.MagnetToDirectLink(_bearer_token, magnet);
+            }
+            catch (Exception ex)
+            {
+                return new GenerateURL() { Error = ex.Message };
+            }
+        }
+
+
+
+
     }
 }
