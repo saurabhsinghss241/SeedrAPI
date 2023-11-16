@@ -31,15 +31,18 @@
         public async Task<string> PostAsync(string url, FormUrlEncodedContent content)
         {
             HttpResponseMessage response = await _httpClient.PostAsync(url, content);
-            if (response.IsSuccessStatusCode)
-            {
-                string responseBody = await response.Content.ReadAsStringAsync();
-                return responseBody;
-            }
-            else
-            {
-                return "Request Failed";
-            }
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsStringAsync();
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    string responseBody = await response.Content.ReadAsStringAsync();
+            //    return responseBody;
+            //}
+            //else
+            //{
+            //    return "Request Failed";
+            //}
         }
 
     }

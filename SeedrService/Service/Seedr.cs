@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using SeedrService.Helpers;
 using SeedrService.Models;
 using System.Diagnostics;
-using System.Linq;
-using File = SeedrService.Models.File;
 
 namespace SeedrService.Service
 {
@@ -11,10 +10,14 @@ namespace SeedrService.Service
     {
         private readonly string _baseURL;
         private readonly HttpClientWrapper _httpClientWrapper;
-        public Seedr(IConfiguration configuration, HttpClientWrapper httpClientWrapper)
+        private readonly IStreamTape _streamTape;
+        private readonly IConfiguration _configuration;
+        public Seedr(IConfiguration configuration, HttpClientWrapper httpClientWrapper, IStreamTape streamTape)
         {
             _baseURL = configuration.GetValue<string>("Seedr:BaseURL");
             _httpClientWrapper = httpClientWrapper;
+            _streamTape = streamTape;
+            _configuration = configuration;
         }
         public async Task<string> AddFolder(string token, string name)
         {
@@ -414,7 +417,7 @@ namespace SeedrService.Service
                 var addMagnetResponse = await AddTorrent(token, magnet);
 
                 if (addMagnetResponse.Code != 200 || addMagnetResponse.Wt != null)
-                    return new GenerateURL() { Error = "Provide Valid and Healthy Torrent." };
+                    return new GenerateURL() { Error = "Provide Valid and Healthy Torrent. Max Size 2.5 GB" };
 
                 (bool success, string folderId, string message) = await ProgressStatus(token, addMagnetResponse.User_torrent_id);
                 if (success && !string.IsNullOrEmpty(folderId))
@@ -425,7 +428,13 @@ namespace SeedrService.Service
                     if (files.Files != null)
                     {
                         var maxFile = files.Files.OrderByDescending(x => x.Size).First();
-                        return await FetchFile(token, maxFile.Folder_file_id.ToString());
+                        var directLink = await FetchFile(token, maxFile.Folder_file_id.ToString());
+                        (bool streamStatus, string streamUrl) = await DirectLinkToStream(directLink.Url);
+                        if (streamStatus)
+                        {
+                            await this.DeleteFolder(token, folderId);
+                            return new GenerateURL() { Result = true, Url = streamUrl };
+                        }
                     }
                 }
                 return new GenerateURL() { Error = message };
@@ -470,15 +479,20 @@ namespace SeedrService.Service
                 {
                     while (completed < 101 && stopwatch.Elapsed < TimeSpan.FromSeconds(120))
                     {
-                        await Task.Delay(1000);
+                        await Task.Delay(10000);
                         var response = await _httpClientWrapper.GetAsync(progressCheckURL);
 
                         int n = response.Length;
                         var result = response[2..^1];
 
                         var currentProgress = JsonConvert.DeserializeObject<ProgressResponse>(result);
+
                         completed = currentProgress.stats != null ? currentProgress.stats.progress : completed;
                         folderId = currentProgress.folder_created;
+                        if (currentProgress.warnings != null)
+                        {
+                            message = currentProgress.warnings;
+                        }
                     }
 
                     if (completed < 101)
@@ -489,13 +503,42 @@ namespace SeedrService.Service
                 }
                 catch (Exception ex)
                 {
-                    await DeleteTorrent(token, torrentId.ToString());
-                    message = ex.Message;
+                    if (string.IsNullOrEmpty(folderId))
+                        await DeleteTorrent(token, torrentId.ToString());
+
+                    message.Concat($",{ex.Message}");
                 }
 
             }
 
             return (true, folderId, message);
+        }
+
+        private async Task<(bool, string)> DirectLinkToStream(string url)
+        {
+            try
+            {
+                string login = _configuration.GetValue<string>("StreamTapeLogin");
+                string key = _configuration.GetValue<string>("StreamTapeKey");
+                var remoteupload = await _streamTape.AddRemoteUpload(login, key, url, "QOQ8AXFChrY", "");
+                var stopwatch = new Stopwatch();
+
+                while (true && stopwatch.Elapsed < TimeSpan.FromSeconds(240))
+                {
+                    var progress = await _streamTape.CheckRemoteUploadProgress(login, key, remoteupload.result.id);
+                    if (progress.status == "finished")
+                    {
+                        return (true, progress.url);
+                    }
+                    await Task.Delay(10000);
+                }
+                return (false, default);
+            }
+            catch (Exception)
+            {
+
+                return (false, default);
+            }
         }
     }
 }
