@@ -2,10 +2,10 @@
 {
     public class MemBandwidthResponse
     {
-        public int bandwidth_used { get; set; }
-        public long bandwidth_max { get; set; }
-        public int space_used { get; set; }
-        public long space_max { get; set; }
-        public int is_premium { get; set; }
+        public int Bandwidth_used { get; set; }
+        public long Bandwidth_max { get; set; }
+        public int Space_used { get; set; }
+        public long Space_max { get; set; }
+        public int Is_premium { get; set; }
     }
 }

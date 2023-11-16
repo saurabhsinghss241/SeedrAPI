@@ -10,86 +10,167 @@ namespace SeedrService.Controllers
     [ApiController]
     public class SeedrController : ControllerBase
     {
-        private readonly ISeedrLogin _seedrLogin;
         private readonly ISeedr _seedr;
-        private readonly IConfiguration _configuration;
-        private readonly IHttpContextAccessor _httpContext;
-        public SeedrController(ISeedrLogin seedrLogin,ISeedr seedr, IConfiguration configuration)
-        {
-            _seedrLogin = seedrLogin;
-            _seedr = seedr;
-            _configuration = configuration;
-        }
 
-        [HttpPost]
-        [Route("GetAccessToken")]
-        public async Task<AuthResponse> GetAccessToken(AuthRequest request)
+        public SeedrController(ISeedr seedr)
         {
-            try
-            {
-                return await _seedrLogin.LoginUsingUsernamePassword(request.Username, request.Password);
-            }
-            catch (Exception ex)
-            {
-                return new AuthResponse() { Error = ex.Message};
-            }
+            _seedr = seedr;
         }
 
         [HttpGet]
         [Route("AddMagnet")]
-        public async Task<string> AddMagnet(string magnet)
+        public async Task<AddTorrentResponse> AddMagnet(string magnet)
         {
             try
             {
                 var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
 
                 if (string.IsNullOrWhiteSpace(_bearer_token))
-                    return "Provide Bearer Token";
+                    return new AddTorrentResponse() { Error = "Provide Valid Bearer Token" };
 
                 if (!HelperMethods.IsMagnetLinkValid(magnet))
-                    return "Provide Valid Magnet Link";
+                    return new AddTorrentResponse() { Error = "Provide Valid Magnet Link" };
 
-                return magnet;
+                return await _seedr.AddTorrent(_bearer_token, magnet);
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return new AddTorrentResponse() { Error = ex.Message };
             }
         }
 
         [HttpGet]
-        [Route("RefreshToken")]
-        public async Task<AuthResponse> RefreshToken(string refreshToken)
+        [Route("ListAll")]
+        public async Task<ListContentResponse> ListAll(int folderId = 0)
         {
             try
             {
-                return await _seedrLogin.RefreshAccessToken(refreshToken);
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
+                if (string.IsNullOrWhiteSpace(_bearer_token))
+                    return new ListContentResponse() { Error = "Provide Valid Bearer Token" };
+
+                return await _seedr.ListContent(_bearer_token, folderId);
             }
             catch (Exception ex)
             {
-                return new AuthResponse() { Error = ex.Message };
+                return new ListContentResponse() { Error = ex.Message }; ;
+            }
+        }
+
+        [HttpGet]
+        [Route("GenerateLink")]
+        public async Task<GenerateURL> GenerateLink(string fileId)
+        {
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
+                if (string.IsNullOrWhiteSpace(_bearer_token))
+                    return new GenerateURL() { Error = "Provide Bearer Token" };
+
+                return await _seedr.FetchFile(_bearer_token, fileId);
+            }
+            catch (Exception ex)
+            {
+                return new GenerateURL() { Error = ex.Message };
+            }
+        }
+
+        [HttpGet]
+        [Route("DeleteFile")]
+        public async Task<CommonResponse> DeleteFile(string fileid)
+        {
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
+                if (string.IsNullOrWhiteSpace(_bearer_token))
+                    return new CommonResponse() { Error = "Provide Bearer Token" };
+
+                return await _seedr.DeleteFile(_bearer_token, fileid);
+            }
+            catch (Exception ex)
+            {
+                return new CommonResponse() { Error = ex.Message }; ;
             }
         }
 
         [HttpGet]
         [Route("DeleteFolder")]
-        public string DeleteAsync(string id)
+        public async Task<CommonResponse> DeleteFolder(string folderId)
         {
             try
             {
                 var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
 
                 if (string.IsNullOrWhiteSpace(_bearer_token))
-                    return "Provide Bearer Token";
+                    return new CommonResponse() { Error = "Provide Bearer Token" };
 
-                _seedr.DeleteFolder(_bearer_token,id);
-                return "";
+                return await _seedr.DeleteFolder(_bearer_token, folderId);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return "";
-                //throw;
+                return new CommonResponse() { Error = ex.Message }; ;
             }
         }
+
+        [HttpGet]
+        [Route("DeleteTorrent")]
+        public async Task<CommonResponse> DeleteTorrent(string torrentId)
+        {
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
+                if (string.IsNullOrWhiteSpace(_bearer_token))
+                    return new CommonResponse() { Error = "Provide Bearer Token" };
+
+                return await _seedr.DeleteTorrent(_bearer_token, torrentId);
+            }
+            catch (Exception ex)
+            {
+                return new CommonResponse() { Error = ex.Message }; ;
+            }
+        }
+
+        [HttpGet]
+        [Route("DeleteWishlist")]
+        public async Task<CommonResponse> DeleteWishlist(string wishlistId)
+        {
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
+                if (string.IsNullOrWhiteSpace(_bearer_token))
+                    return new CommonResponse() { Error = "Provide Bearer Token" };
+
+                return await _seedr.DeleteWishList(_bearer_token, wishlistId);
+            }
+            catch (Exception ex)
+            {
+                return new CommonResponse() { Error = ex.Message }; ;
+            }
+        }
+
+        [HttpGet]
+        [Route("MagnetToDirectLink")]
+        public async Task<GenerateURL> MagnetToDirectLink(string magnet)
+        {
+            try
+            {
+                var _bearer_token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
+                return await _seedr.MagnetToDirectLink(_bearer_token, magnet);
+            }
+            catch (Exception ex)
+            {
+                return new GenerateURL() { Error = ex.Message };
+            }
+        }
+
+
+
+
     }
 }
