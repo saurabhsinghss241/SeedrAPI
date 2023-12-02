@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeedrService", "SeedrService\SeedrService.csproj", "{F3B43B7C-D3F2-4A8A-9DB0-844CB3A01493}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeedrService", "SeedrService\SeedrService.csproj", "{F3B43B7C-D3F2-4A8A-9DB0-844CB3A01493}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Seedr", "Seedr\Seedr.csproj", "{8B4E8AD3-097E-4C7D-8643-8622E35A19AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CachingService", "CachingService\CachingService.csproj", "{A59AE105-E2F1-411D-A420-A430F63F64A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResilientClient", "ResilientClient\ResilientClient.csproj", "{9444260F-BD08-43C9-A45E-7E327F975B7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{F3B43B7C-D3F2-4A8A-9DB0-844CB3A01493}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3B43B7C-D3F2-4A8A-9DB0-844CB3A01493}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3B43B7C-D3F2-4A8A-9DB0-844CB3A01493}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B4E8AD3-097E-4C7D-8643-8622E35A19AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B4E8AD3-097E-4C7D-8643-8622E35A19AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B4E8AD3-097E-4C7D-8643-8622E35A19AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B4E8AD3-097E-4C7D-8643-8622E35A19AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A59AE105-E2F1-411D-A420-A430F63F64A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A59AE105-E2F1-411D-A420-A430F63F64A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A59AE105-E2F1-411D-A420-A430F63F64A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A59AE105-E2F1-411D-A420-A430F63F64A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9444260F-BD08-43C9-A45E-7E327F975B7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9444260F-BD08-43C9-A45E-7E327F975B7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9444260F-BD08-43C9-A45E-7E327F975B7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9444260F-BD08-43C9-A45E-7E327F975B7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

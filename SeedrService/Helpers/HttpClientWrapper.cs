@@ -34,15 +34,6 @@
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadAsStringAsync();
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    string responseBody = await response.Content.ReadAsStringAsync();
-            //    return responseBody;
-            //}
-            //else
-            //{
-            //    return "Request Failed";
-            //}
         }
 
     }

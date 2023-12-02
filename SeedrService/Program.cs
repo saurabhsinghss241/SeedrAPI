@@ -1,5 +1,8 @@
+using Microsoft.Extensions.Configuration;
+using ResilientClient;
 using SeedrService.Helpers;
 using SeedrService.Service;
+using System.ComponentModel.Design;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +12,21 @@ builder.Services.AddTransient<ISeedrLogin, SeedrLogin>();
 builder.Services.AddTransient<ISeedr, Seedr>();
 builder.Services.AddTransient<IStreamTape, StreamTape>();
 
-builder.Services.AddHttpClient<HttpClientWrapper>();
-builder.Services.AddScoped<HttpClientWrapper>();
+builder.Services.AddHttpClient<SeedrService.Helpers.HttpClientWrapper>();
+builder.Services.AddScoped<SeedrService.Helpers.HttpClientWrapper>();
+
+//builder.Services.AddHttpClient("SeedrAuthClient", client =>
+//{
+//    client.BaseAddress = new Uri("https://www.seedr.cc/oauth_test/token.php");
+//});
+
+//builder.Services.AddHttpClient("SeedrServiceClient", client =>
+//{
+//    client.BaseAddress = new Uri("https://www.seedr.cc/oauth_test/resource.php");
+//});
+
+//builder.Services.AddScoped<IHttpClientWrapper, HttpClientWrapper>();
+
 
 //Caching Service
 builder.Services.AddMemoryCache();
