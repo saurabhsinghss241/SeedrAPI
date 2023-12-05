@@ -23,8 +23,5 @@ namespace Seedr.Service.Interface
         Task<string> ChangeName(string token, string name, string password);
         Task<string> ChangePassword(string token, string oldPassword, string newPassword);
         Task<string> GetDevice(string token);
-        //Task<GenerateURL> MagnetToDirectLink(string token, string magnet);
-
-
     }
 }

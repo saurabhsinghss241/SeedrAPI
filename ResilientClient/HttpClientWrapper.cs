@@ -1,6 +1,5 @@
 ﻿using Polly;
 using Polly.CircuitBreaker;
-using Polly.Retry;
 using System.Net;
 
 namespace ResilientClient
@@ -47,7 +46,6 @@ namespace ResilientClient
         {
             var strategy = Policy.WrapAsync(GetRetryPolicy(), GetCircuitBreakerPolicy());
             HttpResponseMessage response = await strategy.ExecuteAsync(async () => await _httpClient.GetAsync(url));
-            //var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
@@ -63,7 +61,6 @@ namespace ResilientClient
         {
             var strategy = Policy.WrapAsync(GetRetryPolicy(), GetCircuitBreakerPolicy());
             HttpResponseMessage response = await strategy.ExecuteAsync(async () => await _httpClient.PostAsync(url, content));
-            //HttpResponseMessage response = await _httpClient.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadAsStringAsync();
