@@ -31,6 +31,7 @@ builder.Services.AddScoped<SeedrService.Helpers.HttpClientWrapper>();
 //Caching Service
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<MyMemoryCache>();
+//builder.Services.AddSingleton<ICaching,RedisCaching>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -10,6 +10,8 @@ namespace ResilientClient
         //private readonly AsyncRetryPolicy _retryPolicy;
         //private readonly AsyncCircuitBreakerPolicy<string> _circuitBreakerPolicy;
         private static readonly string SleepDurationKey = "Broken";
+        public Uri BaseAddress => _httpClient.BaseAddress ?? new Uri(string.Empty);
+
         public HttpClientWrapper(HttpClient httpClient)
         {
             _httpClient = httpClient;

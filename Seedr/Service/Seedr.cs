@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using ResilientClient;
 using Seedr.Models;
-using Seedr.Service.Interface;
+using Seedr.Service.Interfaces;
 
 namespace Seedr.Service
 {

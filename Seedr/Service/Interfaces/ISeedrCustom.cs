@@ -1,6 +1,6 @@
 ﻿using Seedr.Models;
 
-namespace Seedr.Service.Interface
+namespace Seedr.Service.Interfaces
 {
     public interface ISeedrCustom
     {
