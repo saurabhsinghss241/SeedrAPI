@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using ResilientClient;
+using ResilientClient.Intefaces;
 using Seedr.Models;
 using Seedr.Service.Interfaces;
 using System.Diagnostics;
@@ -9,8 +9,8 @@ namespace Seedr.Service
     public class SeedrCustom : ISeedrCustom
     {
         private readonly ISeedr _seedr;
-        private readonly IHttpClientWrapper _httpClientWrapper;
-        public SeedrCustom(ISeedr seedr, IHttpClientWrapper httpClientWrapper)
+        private readonly IRequestClient _httpClientWrapper;
+        public SeedrCustom(ISeedr seedr, IRequestClient httpClientWrapper)
         {
             _seedr = seedr;
             _httpClientWrapper = httpClientWrapper;

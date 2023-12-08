@@ -1,0 +1,27 @@
+﻿#Polly Details
+
+* Order of execution when multiple policies are wrapped together?
+	Top to Bottom is Outer to Inner.
+	First one is the Outermost.
+	Last one is the Innermost.
+
+	The policies are applied to each call from outer (first-configured) to inner (last-configured) order.
+
+	Policy.WrapAsync(GetTimeOutPolicy(), GetRetryPolicy(), GetCircuitBreakerPolicy());
+
+	TimeOut is Outermost
+	Circuitbreaker is innermost
+
+	request -> TimeOut -> Retry -> CircuitBreaker -> actual http call.
+
+	You can change their sequence according to your requirment.
+
+* Best practice for httpClient
+	We should not create new httpClient for each request.
+	Reusing same httpClient for the scope of application is good practice.
+	Instead of manually initializing use AddHttpClient Handler to create Typed httpClient in startup.
+	If you manually initializing httpClient make it as singleton.
+
+#Note
+	You should not initialize new Policy instace for each httpclient call if you want to maintain state.
+	But instead selects a single instance of the circuit-breaker or bulkhead. This is so that the single instance can be statefully reused across requests.

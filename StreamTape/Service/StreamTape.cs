@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using ResilientClient;
+using ResilientClient.Intefaces;
 using StreamTape.Models;
 using StreamTape.Service.Interfaces;
 
@@ -7,8 +7,8 @@ namespace StreamTape.Service
 {
     public class StreamTape : IStreamTape
     {
-        private readonly IHttpClientWrapper _httpClient;
-        public StreamTape(IHttpClientWrapper httpClient)
+        private readonly IRequestClient _httpClient;
+        public StreamTape(IRequestClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -16,7 +16,7 @@ namespace StreamTape.Service
         {
             try
             {
-                string requestURL = _httpClient.BaseAddress + $"/remotedl/add?login={login}&key={key}&url={Uri.EscapeDataString(url)}&folder={folder_id}amp;name={Uri.EscapeDataString(name)}";
+                string requestURL = _httpClient.BaseUrl + $"/remotedl/add?login={login}&key={key}&url={Uri.EscapeDataString(url)}&folder={folder_id}amp;name={Uri.EscapeDataString(name)}";
                 var response = await _httpClient.GetAsync(requestURL);
                 return JsonConvert.DeserializeObject<AddRUResponse>(response);
             }
@@ -30,7 +30,7 @@ namespace StreamTape.Service
         {
             try
             {
-                string requestURL = $"{_httpClient.BaseAddress}/remotedl/status?login={login}&key={key}&id={uploadId}";
+                string requestURL = $"{_httpClient.BaseUrl}/remotedl/status?login={login}&key={key}&id={uploadId}";
                 var response = await _httpClient.GetAsync(requestURL);
                 var jsonresponse = JsonConvert.DeserializeObject<ProgressRUResponse>(response);
                 UploadInfo result = JsonConvert.DeserializeObject<UploadInfo>(JsonConvert.SerializeObject(jsonresponse.result[$"{uploadId}"]));
@@ -47,7 +47,7 @@ namespace StreamTape.Service
         {
             try
             {
-                string requestURL = $"{_httpClient.BaseAddress}/remotedl/remove?login={login}&key={key}&id={uploadId}";
+                string requestURL = $"{_httpClient.BaseUrl}/remotedl/remove?login={login}&key={key}&id={uploadId}";
                 var response = await _httpClient.GetAsync(requestURL);
                 return response;
             }
@@ -61,7 +61,7 @@ namespace StreamTape.Service
         {
             try
             {
-                string requestURL = $"{_httpClient.BaseAddress}/file/rename?login={login}&key={key}&file={linkid}&name={name}";
+                string requestURL = $"{_httpClient.BaseUrl}/file/rename?login={login}&key={key}&file={linkid}&name={name}";
                 var response = await _httpClient.GetAsync(requestURL);
                 return response;
             }

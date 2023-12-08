@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using ResilientClient;
+using ResilientClient.Intefaces;
 using Seedr.Models;
 using Seedr.Service.Interfaces;
 
@@ -9,10 +9,10 @@ namespace Seedr.Service
     public class Seedr : ISeedr
     {
         private readonly string _baseURL;
-        private readonly IHttpClientWrapper _httpClientWrapper;
+        private readonly IRequestClient _httpClientWrapper;
         //private readonly IStreamTape _streamTape;
         private readonly IConfiguration _configuration;
-        public Seedr(IConfiguration configuration, IHttpClientWrapper httpClientWrapper)
+        public Seedr(IConfiguration configuration, IRequestClient httpClientWrapper)
         {
             _configuration = configuration;
             _baseURL = _configuration.GetValue<string>("Seedr:BaseURL");

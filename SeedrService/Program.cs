@@ -1,8 +1,9 @@
 using Microsoft.Extensions.Configuration;
-using ResilientClient;
+using ResilientClient.Intefaces;
 using SeedrService.Helpers;
 using SeedrService.Service;
 using System.ComponentModel.Design;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +13,10 @@ builder.Services.AddTransient<ISeedrLogin, SeedrLogin>();
 builder.Services.AddTransient<ISeedr, Seedr>();
 builder.Services.AddTransient<IStreamTape, StreamTape>();
 
-builder.Services.AddHttpClient<SeedrService.Helpers.HttpClientWrapper>();
-builder.Services.AddScoped<SeedrService.Helpers.HttpClientWrapper>();
+builder.Services.AddHttpClient<HttpClientWrapper>();
+builder.Services.AddScoped<HttpClientWrapper>();
+
+//builder.Services.AddHttpClient<IHttpClientWrapper, HttpClientWrapper>();
 
 //builder.Services.AddHttpClient("SeedrAuthClient", client =>
 //{
