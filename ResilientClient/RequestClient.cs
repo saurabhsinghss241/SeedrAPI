@@ -32,25 +32,25 @@ namespace ResilientClient
 
             //define policy with retry and circuitbreaker
             //_policyWrap = Done
-            _policyWrap = Policy.WrapAsync(GetTimeOutPolicy(), GetRetryPolicy(), GetCircuitBreakerPolicy());
+            _policyWrap = Policy.WrapAsync(GetTimeOutPolicy(timeOutPolicyConfig), GetRetryPolicy(retryPolicyConfig), GetCircuitBreakerPolicy(cbPolicyConfig));
         }
 
 
-        private IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy()
+        private static IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy(CircuitBreakerPolicyConfig cb)
         {
             return Policy<HttpResponseMessage>
                 .HandleResult(res => res.StatusCode == HttpStatusCode.InternalServerError)
-                .CircuitBreakerAsync(3, TimeSpan.FromSeconds(2),
+                .CircuitBreakerAsync(cb.AllowExceptions, TimeSpan.FromSeconds(cb.BreakDuration),
                    onBreak: (dr, ts, ctx) => { ctx[SleepDurationKey] = ts; },
                    onReset: (ctx) => { ctx[SleepDurationKey] = null; });
         }
 
-        private IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(RetryPolicyConfig rp)
         {
             return Policy<HttpResponseMessage>
             .HandleResult(res => res.StatusCode == HttpStatusCode.InternalServerError)
-            .Or<BrokenCircuitException>()
-            .WaitAndRetryAsync(4,
+            //.Or<BrokenCircuitException>()
+            .WaitAndRetryAsync(rp.RetryCount,
                 sleepDurationProvider: (c, ctx) =>
                 {
                     if (ctx.ContainsKey(SleepDurationKey))
@@ -64,9 +64,9 @@ namespace ResilientClient
                 });
         }
 
-        private IAsyncPolicy<HttpResponseMessage> GetTimeOutPolicy()
+        private static IAsyncPolicy<HttpResponseMessage> GetTimeOutPolicy(TimeOutPolicyConfig to)
         {
-            return Policy.TimeoutAsync<HttpResponseMessage>(10);
+            return Policy.TimeoutAsync<HttpResponseMessage>(to.Seconds);
         }
         public async Task<string> GetAsync(string url)
         {

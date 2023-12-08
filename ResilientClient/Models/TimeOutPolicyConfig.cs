@@ -2,7 +2,6 @@
 {
     public class TimeOutPolicyConfig
     {
-        public int AllowExceptions { get; set; } = 3;
-        public int BreakDuration { get; set; } = 6;
+        public int Seconds { get; set; } = 3;
     }
 }
