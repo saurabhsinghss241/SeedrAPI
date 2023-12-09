@@ -11,10 +11,15 @@ namespace APITesting.Service
         {
             _requestClient = requestClient;
         }
-        public async Task<string> GetData(int statusCode)
+        public async Task<string> GetDataNew(int statusCode)
         {
             var url = $"{_requestClient.BaseUrl}{statusCode}";
             return await _requestClient.GetAsync(url);
+        }
+
+        public Task<string> GetDataOld(int statusCode)
+        {
+            throw new NotImplementedException();
         }
     }
 }

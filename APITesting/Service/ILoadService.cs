@@ -2,6 +2,7 @@
 {
     public interface ILoadService
     {
-        Task<string> GetData(int statusCode);
+        Task<string> GetDataNew(int statusCode);
+        Task<string> GetDataOld(int statusCode);
     }
 }

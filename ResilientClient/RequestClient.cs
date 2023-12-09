@@ -1,6 +1,4 @@
 ﻿using Polly;
-using Polly.CircuitBreaker;
-using Polly.Timeout;
 using Polly.Wrap;
 using ResilientClient.Intefaces;
 using ResilientClient.Models;
@@ -30,8 +28,6 @@ namespace ResilientClient
             retryPolicyConfig ??= new RetryPolicyConfig();
             cbPolicyConfig ??= new CircuitBreakerPolicyConfig();
 
-            //define policy with retry and circuitbreaker
-            //_policyWrap = Done
             _policyWrap = Policy.WrapAsync(GetTimeOutPolicy(timeOutPolicyConfig), GetRetryPolicy(retryPolicyConfig), GetCircuitBreakerPolicy(cbPolicyConfig));
         }
 
@@ -70,8 +66,6 @@ namespace ResilientClient
         }
         public async Task<string> GetAsync(string url)
         {
-            //var strategy = Policy.WrapAsync(GetRetryPolicy(), GetCircuitBreakerPolicy());
-            //HttpResponseMessage response = await strategy.ExecuteAsync(async () => await _httpClient.GetAsync(url));
             HttpResponseMessage response = await _policyWrap.ExecuteAsync(async () => await _httpClient.GetAsync(url));
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
@@ -79,15 +73,13 @@ namespace ResilientClient
 
         public async Task<string> PostAsync(string url, string content)
         {
-            HttpResponseMessage response = await _httpClient.PostAsync(url, new StringContent(content));
+            HttpResponseMessage response = await _policyWrap.ExecuteAsync(async () => await _httpClient.PostAsync(url, new StringContent(content)));
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
 
         public async Task<string> PostAsync(string url, FormUrlEncodedContent content)
         {
-            //var strategy = Policy.WrapAsync(GetRetryPolicy(), GetCircuitBreakerPolicy());
-            //HttpResponseMessage response = await strategy.ExecuteAsync(async () => await _httpClient.PostAsync(url, content));
             HttpResponseMessage response = await _policyWrap.ExecuteAsync(async () => await _httpClient.PostAsync(url, content));
             response.EnsureSuccessStatusCode();
 

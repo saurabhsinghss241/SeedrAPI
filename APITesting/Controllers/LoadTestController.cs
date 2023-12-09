@@ -16,7 +16,17 @@ namespace APITesting.Controllers
         [HttpGet]
         public async Task<string> Get(int code)
         {
-            return await _loadService.GetData(code);
+            try
+            {
+                return await _loadService.GetData(code);
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"{ex.Message}");
+                return ex.Message;
+            }
+
         }
     }
 }
