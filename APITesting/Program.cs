@@ -14,8 +14,6 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 var config = builder.Configuration;
 builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
 {
-    // Declare your services with proper lifetime
-
     builder.Register(c => new RequestClient(config.GetSection("LoadTestConfig").Get<RequestClientOptions>())).Keyed<IRequestClient>("LoadTestConfigKey").SingleInstance();
     builder.RegisterType<LoadService>().As<ILoadService>().WithAttributeFiltering();
 });

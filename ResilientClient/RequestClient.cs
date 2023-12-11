@@ -7,11 +7,18 @@ using System.Net;
 namespace ResilientClient
 {
     //For best performance HttpClientWrapper instance lifecycle should be Signleton.
+    //Using Autofac, add in Program.cs
+    //builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+    //    var config = builder.Configuration;
+    //    builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
+    //    {
+    //      builder.Register(c => new RequestClient(config.GetSection("LoadTestConfig").Get<RequestClientOptions>())).Keyed<IRequestClient>("LoadTestConfigKey").SingleInstance();
+    //      builder.RegisterType<LoadService>().As<ILoadService>().WithAttributeFiltering();
+    //    });
     public class RequestClient : IRequestClient
     {
         private readonly HttpClient _httpClient;
         private readonly AsyncPolicyWrap<HttpResponseMessage> _policyWrap;
-        private static readonly string SleepDurationKey = "Broken";
         private readonly string _baseUrl;
         public string BaseUrl { get { return _baseUrl; } }
 
@@ -37,8 +44,19 @@ namespace ResilientClient
             return Policy<HttpResponseMessage>
                 .HandleResult(res => res.StatusCode == HttpStatusCode.InternalServerError)
                 .CircuitBreakerAsync(cb.AllowExceptions, TimeSpan.FromSeconds(cb.BreakDuration),
-                   onBreak: (dr, ts, ctx) => { ctx[SleepDurationKey] = ts; },
-                   onReset: (ctx) => { ctx[SleepDurationKey] = null; });
+                   onBreak: (ex, breakDelay, ctx) =>
+                   {
+                       Console.WriteLine($"Circuit is open due to {ex.Exception.Message}. Retry after {breakDelay.TotalSeconds} seconds.");
+                   },
+                   onReset: (ctx) =>
+                   {
+                       Console.WriteLine("Circuit is reset.");
+                   },
+                   onHalfOpen: () =>
+                   {
+                       // This is called when the circuit transitions to half-open state
+                       Console.WriteLine("Circuit is half-open. Retrying...");
+                   });
         }
 
         private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(RetryPolicyConfig rp)
@@ -47,16 +65,17 @@ namespace ResilientClient
             .HandleResult(res => res.StatusCode == HttpStatusCode.InternalServerError)
             //.Or<BrokenCircuitException>()
             .WaitAndRetryAsync(rp.RetryCount,
-                sleepDurationProvider: (c, ctx) =>
+                sleepDurationProvider: (retryAttempt, ctx) =>
                 {
-                    if (ctx.ContainsKey(SleepDurationKey))
-                        return (TimeSpan)ctx[SleepDurationKey];
-                    return TimeSpan.FromMilliseconds(200);
+                    //Fixed time
+                    //return TimeSpan.FromMilliseconds(200);
+
+                    //exponential backoff strategy
+                    return TimeSpan.FromSeconds(Math.Pow(2, retryAttempt));
                 },
-                onRetry: (dr, ts, ctx) =>
+                onRetry: (exception, calculatedWaitDuration, retryCount, context) =>
                 {
-                    Console.WriteLine($"Context: {(ctx.ContainsKey(SleepDurationKey) ? "Open" : "Closed")}");
-                    Console.WriteLine($"Waits: {ts.TotalMilliseconds}");
+                    Console.WriteLine($"Retry #{retryCount} due to {exception.Exception.Message}. Retrying in {calculatedWaitDuration.TotalSeconds} seconds.");
                 });
         }
 
