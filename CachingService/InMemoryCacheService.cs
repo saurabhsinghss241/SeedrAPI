@@ -15,25 +15,47 @@ namespace CachingService
         }
         public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) where T : class
         {
-            string? cachedValue = await _cache.GetStringAsync(key, cancellationToken);
+            try
+            {
+                string? cachedValue = await _cache.GetStringAsync(key, cancellationToken);
 
-            if (string.IsNullOrEmpty(cachedValue))
-                return null;
-
-            T? value = JsonConvert.DeserializeObject<T>(cachedValue);
-            return value;
+                if (!string.IsNullOrEmpty(cachedValue))
+                    return JsonConvert.DeserializeObject<T>(cachedValue);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting value for key {key} from Cache: {ex.Message}");
+            }
+            return null;
         }
 
         public async Task RemoveAsync<T>(string key, CancellationToken cancellationToken = default)
         {
-            await _cache.RemoveAsync(key, cancellationToken);
+            try
+            {
+                await _cache.RemoveAsync(key, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error removing key {key} from Cache: {ex.Message}");
+            }
         }
 
-        public async Task SetAsync<T>(string key, T value, CancellationToken cancellationToken = default) where T : class
+        public async Task SetAsync<T>(string key, T value, TimeSpan expiry, CancellationToken cancellationToken = default) where T : class
         {
-            string cacheValue = JsonConvert.SerializeObject(value);
+            try
+            {
+                string cacheValue = JsonConvert.SerializeObject(value);
 
-            await _cache.SetStringAsync(key, cacheValue, cancellationToken);
+                await _cache.SetStringAsync(key, cacheValue, new DistributedCacheEntryOptions()
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(expiry.TotalSeconds)
+                }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error setting value for key {key} in Redis Cache: {ex.Message}");
+            }
         }
     }
 }
