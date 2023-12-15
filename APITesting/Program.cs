@@ -8,6 +8,7 @@ using Autofac.Features.AttributeFilters;
 using Microsoft.Extensions.DependencyInjection;
 using CachingService;
 using CachingService.Interfaces;
+using HashingService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,8 @@ builder.Services.AddControllers();
 //builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSingleton<ICacheService, RedisCacheService>(sp => new RedisCacheService(config.GetSection("RedisCacheConfig").Get<RedisCacheConfig>()));
+builder.Services.AddSingleton<IHashingService, BCryptService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

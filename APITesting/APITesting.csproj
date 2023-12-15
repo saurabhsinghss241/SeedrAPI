@@ -13,6 +13,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\CachingService\CachingService.csproj" />
+		<ProjectReference Include="..\HashingService\HashingService.csproj" />
 		<ProjectReference Include="..\ResilientClient\ResilientClient.csproj" />
 	</ItemGroup>
 

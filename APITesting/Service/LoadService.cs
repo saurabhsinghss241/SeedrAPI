@@ -22,7 +22,7 @@ namespace APITesting.Service
             if (string.IsNullOrEmpty(cacheResult))
             {
                 var res = await _requestClient.GetAsync(url);
-                await _cache.SetAsync<string>(url, res, TimeSpan.FromMinutes(5));
+                await _cache.SetAsync<string>(url, res, TimeSpan.FromSeconds(120));
                 return res;
             }
             return cacheResult;

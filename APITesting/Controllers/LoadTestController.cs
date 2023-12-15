@@ -1,4 +1,5 @@
 ﻿using APITesting.Service;
+using HashingService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APITesting.Controllers
@@ -8,9 +9,11 @@ namespace APITesting.Controllers
     public class LoadTestController : ControllerBase
     {
         private readonly ILoadService _loadService;
-        public LoadTestController(ILoadService loadService)
+        private readonly IHashingService _hashingService;
+        public LoadTestController(ILoadService loadService, IHashingService hashingService)
         {
             _loadService = loadService;
+            _hashingService = hashingService;
         }
 
         [HttpGet]
@@ -30,16 +33,32 @@ namespace APITesting.Controllers
         }
 
         [HttpGet]
-        [Route("Cache")]
-        public async Task<string> GetCachedEntry(int code)
+        [Route("Encrypt")]
+        public string Encrypt(string key)
         {
             try
             {
-                return await _loadService.GetDataNew(code);
+                return _hashingService.Encrypt(key);
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"{ex.Message}");
+                return ex.Message;
+            }
 
+        }
+        [HttpGet]
+        [Route("Decrypt")]
+        public async Task<string> Decrypt(string key, string hash)
+        {
+            try
+            {
+                if (_hashingService.Decrypt(key, hash))
+                    return "Valid Hash";
+                return "Invalid Hash";
+            }
+            catch (Exception ex)
+            {
                 Console.WriteLine($"{ex.Message}");
                 return ex.Message;
             }
