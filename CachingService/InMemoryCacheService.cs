@@ -1,11 +1,9 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using CachingService.Interfaces;
+using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
 namespace CachingService
 {
-    //Register in Program.cs
-    //builder.Services.AddDistributedMemoryCache();
-    //builder.Services.AddSignleton<ICacheService,InMemoryCacheService>();
     public class InMemoryCacheService : ICacheService
     {
         private readonly IDistributedCache _cache;

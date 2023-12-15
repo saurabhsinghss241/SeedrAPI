@@ -6,15 +6,6 @@ using System.Net;
 
 namespace ResilientClient
 {
-    //For best performance HttpClientWrapper instance lifecycle should be Signleton.
-    //Using Autofac, add in Program.cs
-    //builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-    //    var config = builder.Configuration;
-    //    builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
-    //    {
-    //      builder.Register(c => new RequestClient(config.GetSection("LoadTestConfig").Get<RequestClientOptions>())).Keyed<IRequestClient>("LoadTestConfigKey").SingleInstance();
-    //      builder.RegisterType<LoadService>().As<ILoadService>().WithAttributeFiltering();
-    //    });
     public class RequestClient : IRequestClient
     {
         private readonly HttpClient _httpClient;

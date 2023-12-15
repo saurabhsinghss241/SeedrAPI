@@ -1,28 +1,16 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using CachingService.Interfaces;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace CachingService
 {
-    //Register in Program.cs
-    //builder.Services.AddSignleton<ICacheService,RedisCacheService>();
     public class RedisCacheService : ICacheService
     {
         private readonly ConnectionMultiplexer _connection;
-        private readonly IConfiguration _configuration;
-
-        public RedisCacheService(IConfiguration configuration)
+        public RedisCacheService(IRedisCacheConfig config)
         {
-            _configuration = configuration;
-            string connectionString = _configuration.GetConnectionString("RedisCache");
-
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString), "Redis connection string is null.");
-            }
-            _connection = ConnectionMultiplexer.Connect(connectionString);
+            _connection = ConnectionMultiplexer.Connect($"{config.HostName}:{config.Port},user={config.Username},password={config.Password}");
         }
-
         public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) where T : class
         {
             try

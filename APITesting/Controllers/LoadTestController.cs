@@ -18,7 +18,24 @@ namespace APITesting.Controllers
         {
             try
             {
-                return await _loadService.GetData(code);
+                return await _loadService.GetDataNew(code);
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"{ex.Message}");
+                return ex.Message;
+            }
+
+        }
+
+        [HttpGet]
+        [Route("Cache")]
+        public async Task<string> GetCachedEntry(int code)
+        {
+            try
+            {
+                return await _loadService.GetDataNew(code);
             }
             catch (Exception ex)
             {

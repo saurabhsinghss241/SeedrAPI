@@ -4,6 +4,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>35601197-a73c-44aa-97a3-a013c9af2ba5</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -11,6 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\CachingService\CachingService.csproj" />
 		<ProjectReference Include="..\ResilientClient\ResilientClient.csproj" />
 	</ItemGroup>
 
