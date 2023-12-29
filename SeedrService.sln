@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StreamTape", "StreamTape\St
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APITesting", "APITesting\APITesting.csproj", "{74423A00-51D5-47C7-B146-F4028BA3FB96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashingService", "HashingService\HashingService.csproj", "{3D62CA7D-154D-4FE0-AF25-479A7A51F464}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HashingService", "HashingService\HashingService.csproj", "{3D62CA7D-154D-4FE0-AF25-479A7A51F464}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageBrokerService", "MessageBrokerService\MessageBrokerService.csproj", "{7D5BFD7D-AA7F-466F-8B9D-2859C098C686}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{3D62CA7D-154D-4FE0-AF25-479A7A51F464}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D62CA7D-154D-4FE0-AF25-479A7A51F464}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D62CA7D-154D-4FE0-AF25-479A7A51F464}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D5BFD7D-AA7F-466F-8B9D-2859C098C686}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D5BFD7D-AA7F-466F-8B9D-2859C098C686}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D5BFD7D-AA7F-466F-8B9D-2859C098C686}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D5BFD7D-AA7F-466F-8B9D-2859C098C686}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

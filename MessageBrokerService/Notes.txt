@@ -1,0 +1,21 @@
+﻿# Publisher - Sending Messages
+# Queue
+	Messages are stored here.
+	Message follow FIFO Order.
+
+# Consumer - Waiting for the Messages
+
+
+# Message Broker Terminology 
+	1. Publisher & Consumer
+		1 to 1 Mapping
+	
+	2. Publisher & Subscriber
+		1 to many Mapping
+
+	3. Routing
+		1 Producer sending to multiple consumer based on certaing property.
+
+	4. RPC - Request/Reply Pattern
+		Producer sends msg
+		Consumer sends ack once successfully consumed the msg
