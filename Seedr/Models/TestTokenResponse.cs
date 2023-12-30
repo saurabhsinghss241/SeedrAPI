@@ -1,8 +1,7 @@
 ﻿namespace Seedr.Models
 {
-    public class CommonResponse : Error
+    internal class TestTokenResponse
     {
         public bool Result { get; set; }
-        public int Code { get; set; }
     }
 }

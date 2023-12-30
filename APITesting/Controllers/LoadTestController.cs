@@ -38,7 +38,7 @@ namespace APITesting.Controllers
         {
             try
             {
-                return _hashingService.Encrypt(key);
+                return _hashingService.Hash(key);
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@ namespace APITesting.Controllers
         {
             try
             {
-                if (_hashingService.Decrypt(key, hash))
+                if (_hashingService.IsValidHash(key, hash))
                     return "Valid Hash";
                 return "Invalid Hash";
             }

@@ -8,6 +8,7 @@ Add these in Program.cs
 	Add these in your Program.cs, pick any one of the mentioned ways
 
 	1. Basic Way
+	var config = builder.Configuration;
 	builder.Services.AddSingleton<ICacheService, RedisCacheService>(sp => new RedisCacheService(config.GetSection("RedisCacheConfig").Get<RedisCacheConfig>()));
 
 	2. Using AutoFac

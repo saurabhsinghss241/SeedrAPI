@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using Seedr.Service.Interfaces;
 using SeedrService.Helpers;
 using SeedrService.Models;
 using SeedrService.Service;
@@ -69,7 +70,7 @@ namespace SeedrService.Controllers
                 if (string.IsNullOrWhiteSpace(_bearer_token))
                     return new GenerateURL() { Error = "Provide Bearer Token" };
 
-                return await _seedr.FetchFile(_bearer_token, fileId);
+                return await _seedr.FetchFileLink(_bearer_token, fileId);
             }
             catch (Exception ex)
             {

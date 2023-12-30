@@ -22,18 +22,18 @@ namespace Seedr.Service
                 var addMagnetResponse = await _seedr.AddTorrent(token, magnet);
 
                 if (addMagnetResponse.Code != 200 || addMagnetResponse.Wt != null)
-                    return new GenerateURL() { Error = "Provide Valid and Healthy Torrent. Max Size 2.5 GB" };
+                    return new GenerateURL() { ErrorMsg = "Provide Valid and Healthy Torrent. Max Size 2.5 GB" };
 
                 (bool success, string folderId, string message) = await IsTorrentProcessed(token, addMagnetResponse.User_torrent_id);
                 if (success && !string.IsNullOrEmpty(folderId))
                 {
                     //Using FolderId List all Files and Pick the biggest and then generate link
-                    var files = await _seedr.ListContent(token, int.Parse(folderId));
+                    var files = await _seedr.ListContent(token, folderId);
 
                     if (files.Files != null)
                     {
                         var maxFile = files.Files.OrderByDescending(x => x.Size).First();
-                        var directLink = await _seedr.FetchFile(token, maxFile.Folder_file_id.ToString());
+                        var directLink = await _seedr.FetchFileLink(token, maxFile.Folder_file_id.ToString());
                         //TODO
                         //(bool streamStatus, string streamUrl) = await DirectLinkToStream(directLink.Url);
                         //if (streamStatus)
@@ -43,11 +43,11 @@ namespace Seedr.Service
                         }
                     }
                 }
-                return new GenerateURL() { Error = message };
+                return new GenerateURL() { ErrorMsg = message };
             }
             catch (Exception ex)
             {
-                return new GenerateURL() { Error = ex.Message };
+                return new GenerateURL() { ErrorMsg = ex.Message };
             }
         }
         public async Task<(bool, string, string)> IsTorrentProcessed(string token, int torrentId)

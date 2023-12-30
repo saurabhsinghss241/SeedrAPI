@@ -1,6 +1,6 @@
 ﻿namespace Seedr.Models
 {
-    public class MemBandwidthResponse
+    public class MemBandwidthResponse : Error
     {
         public int Bandwidth_used { get; set; }
         public long Bandwidth_max { get; set; }

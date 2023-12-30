@@ -1,6 +1,6 @@
 ﻿namespace Seedr.Models
 {
-    public class AddTorrentResponse
+    public class AddTorrentResponse : Error
     {
         public bool Result { get; set; }
         public int Code { get; set; }
@@ -8,7 +8,6 @@
         public string Title { get; set; }
         public string Torrent_hash { get; set; }
         public Wt Wt { get; set; }
-        public string Error { get; set; }
     }
     public class Wt
     {

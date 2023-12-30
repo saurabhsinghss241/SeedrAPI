@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>a66437db-4021-4e3c-8d1c-5fd6fc80a016</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CachingService\CachingService.csproj" />
+		<ProjectReference Include="..\HashingService\HashingService.csproj" />
+		<ProjectReference Include="..\Seedr\Seedr.csproj" />
+	</ItemGroup>
+
+</Project>

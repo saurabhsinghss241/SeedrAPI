@@ -1,6 +1,6 @@
 ﻿namespace Seedr.Models
 {
-    public class ListContentResponse
+    public class ListContentResponse : Error
     {
         public long Space_max { get; set; }
         public int Space_used { get; set; }
@@ -16,7 +16,6 @@
         public List<Torrent> Torrents { get; set; }
         public List<Folder> Folders { get; set; }
         public List<File> Files { get; set; }
-        public string Error { get; set; }
     }
     public class Folder
     {

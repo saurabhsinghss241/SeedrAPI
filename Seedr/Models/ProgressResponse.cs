@@ -1,6 +1,6 @@
 ﻿namespace Seedr.Models
 {
-    public class ProgressResponse
+    public class ProgressResponse : Error
     {
         public string title { get; set; }
         public float size { get; set; }

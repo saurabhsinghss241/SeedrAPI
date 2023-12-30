@@ -1,6 +1,9 @@
 ﻿For best performance HttpClientWrapper instance lifecycle should be Signleton.
 
-#Register Request Client in Service.
+# Register Service (Normal)
+builder.Services.AddSingleton<IRequestClient, RequestClient>(sp => new RequestClient(config.GetSection("RequestClientConfig").Get<RequestClientOptions>()));
+
+#Register Service (NamedClient)
   Using Autofac, add in Program.cs
   builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
   var config = builder.Configuration;
@@ -25,3 +28,6 @@
       "BreakDuration": 30
     }
 }
+
+
+# TODOD - Analysis BaseURL is needed or not.

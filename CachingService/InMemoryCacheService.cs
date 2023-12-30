@@ -27,7 +27,7 @@ namespace CachingService
             return null;
         }
 
-        public async Task RemoveAsync<T>(string key, CancellationToken cancellationToken = default)
+        public async Task RemoveAsync(string key, CancellationToken cancellationToken = default)
         {
             try
             {

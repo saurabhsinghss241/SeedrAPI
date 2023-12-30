@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SeedrService.Models;
-using SeedrService.Service;
+using Seedr.Service;
 
 namespace SeedrService.Controllers
 {

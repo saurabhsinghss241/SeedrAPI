@@ -35,7 +35,6 @@ namespace MessageBrokerService
                 Console.WriteLine(ex.Message);
             }
         }
-
         public void ReceiveMessage(Action<string> handleMessage, string queueName)
         {
             try

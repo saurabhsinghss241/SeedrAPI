@@ -4,14 +4,14 @@ namespace Seedr.Service.Interfaces
 {
     public interface ISeedr
     {
-        Task<string> TestToken(string token);
+        Task<bool> TestToken(string token);
         Task<string> GetSettings(string token);
         Task<MemBandwidthResponse> GetMemoryBandWidth(string token);
-        Task<AddTorrentResponse> AddTorrent(string token, string magnet, string wishlistId = "", int folderId = -1);
+        Task<AddTorrentResponse> AddTorrent(string token, string magnet, string wishlistId = "", string folderId = "-1");
         Task<string> ScanPage(string token, string url);
         Task<string> CreateArchive(string token, string folderId);
-        Task<GenerateURL> FetchFile(string token, string fileId);
-        Task<ListContentResponse> ListContent(string token, int folderId = 0, string contentType = "folder");
+        Task<GenerateURL> FetchFileLink(string token, string fileId);
+        Task<ListContentResponse> ListContent(string token, string folderId = "0", string contentType = "folder");
         Task<string> RenameFile(string token, string fileId, string renameTo);
         Task<string> RenameFolder(string token, string folderId, string renameTo);
         Task<CommonResponse> DeleteFile(string token, string fileId);
